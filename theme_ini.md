@@ -1,106 +1,65 @@
-# Theme Inheritance
+# CrystalDiskInfo `theme.ini`
 
-CrystalDiskInfo themes may inherit resources from one or more parent themes.
+`theme.ini` defines the metadata, colors, transparency, and inheritance
+rules of a CrystalDiskInfo theme.
 
-Parent themes are specified in the `[Info]` section using the sequential keys:
+A minimal example is:
 
 ```ini
-ParentTheme1=ThemeA
-ParentTheme2=ThemeB
-ParentTheme3=ThemeC
+[Info]
+Author=YourName
+
+[Color];RGB
+LabelText=0x000000;
+ButtonText=0x000000;
+ListText1=0x000000;
+ListText2=0x000000;
+ListBk1=0xFFFFFF;
+ListBk2=0xF8F8F8;
+ListLine1=0xE0E0E0;
+ListLine2=0xF0F0F0;
+Glass=0xFFFFFF;
+
+[Alpha]
+GlassAlpha=128;
+````
+
+---
+
+# `[Info]`
+
+The `[Info]` section contains theme metadata and optional parent-theme
+definitions.
+
+## `Author`
+
+Specifies the theme author.
+
+```ini
+[Info]
+Author=YourName
 ```
 
-The `ParentTheme<N>` entries are **optional and ordered**.
+---
 
 ## `ParentTheme<N>`
 
-The general form is:
-
-```ini
-ParentTheme<N>=<ThemeName>
-```
-
-where `<N>` is a positive integer starting from `1`.
-
-For example:
+Specifies an optional parent theme.
 
 ```ini
 [Info]
-Author=My Theme
+Author=YourName
 ParentTheme1=ShizukuMiko
 ParentTheme2=ShizukuHotaru
 ```
 
-### Optional
+Parent themes are:
 
-A theme does not need to specify any parent theme.
+* optional
+* ordered
+* sequential
 
-A completely standalone theme may simply use:
-
-```ini
-[Info]
-Author=My Theme
-```
-
-A derived theme may specify one or more parents:
-
-```ini
-[Info]
-Author=My Theme
-ParentTheme1=ShizukuMiko
-```
-
-Additional parents can be added when necessary:
-
-```ini
-[Info]
-Author=My Theme
-ParentTheme1=ShizukuMiko
-ParentTheme2=ShizukuHotaru
-ParentTheme3=AnotherTheme
-```
-
-## Ordering
-
-Parent themes are **ordered**.
-
-`ParentTheme1` has higher priority than `ParentTheme2`, which has higher priority than `ParentTheme3`, and so on.
-
-Therefore:
-
-```ini
-ParentTheme1=ThemeA
-ParentTheme2=ThemeB
-```
-
-is not equivalent to:
-
-```ini
-ParentTheme1=ThemeB
-ParentTheme2=ThemeA
-```
-
-When resolving an inherited resource, the parent themes should be considered in their declared order.
-
-Conceptually:
-
-```text
-Current Theme
-      │
-      ├── ParentTheme1  ← highest parent priority
-      │
-      ├── ParentTheme2
-      │
-      ├── ParentTheme3
-      │
-      └── ...
-```
-
-The current theme itself takes precedence over its parents.
-
-## Sequential Numbering
-
-`ParentTheme<N>` entries form a sequential list.
+The numbering starts at `1`.
 
 Valid:
 
@@ -108,19 +67,6 @@ Valid:
 ParentTheme1=ThemeA
 ParentTheme2=ThemeB
 ParentTheme3=ThemeC
-```
-
-Valid:
-
-```ini
-ParentTheme1=ThemeA
-```
-
-Valid:
-
-```ini
-[Info]
-Author=My Theme
 ```
 
 Invalid:
@@ -132,60 +78,167 @@ ParentTheme3=ThemeC
 
 because `ParentTheme2` is missing.
 
-Do not skip numbers when declaring parent themes.
+---
 
-## Resource Resolution
+# Parent Theme Resolution
 
-A theme can be viewed as a layered resource set:
+Parent themes are searched in order.
+
+Conceptually:
 
 ```text
-                    Current Theme
-                         │
-                         ▼
-                 ┌───────────────┐
-                 │ Local Resource│
-                 └───────┬───────┘
-                         │
-                    not found?
-                         ▼
-                 ┌───────────────┐
-                 │ ParentTheme1  │
-                 └───────┬───────┘
-                         │
-                    not found?
-                         ▼
-                 ┌───────────────┐
-                 │ ParentTheme2  │
-                 └───────┬───────┘
-                         │
-                    not found?
-                         ▼
-                       ...
+Current Theme
+      ↓
+ParentTheme1
+      ↓
+ParentTheme2
+      ↓
+ParentTheme3
+      ↓
+...
 ```
 
-This allows a theme to override only the resources it actually changes.
+The current theme has priority over all parent themes.
+
+If a resource is not present in the current theme, it may be obtained
+from the first parent theme that provides it.
 
 For example:
 
 ```text
-ShizukuMiko/
-├── SDdiskStatusBad-100.png
-├── ...
-├── SDdiskStatusUnknown-300.png
-├── ShizukuBackground-300.png
-└── theme.ini
+ShizukuMiko
+├── character resources
+├── theme.ini
+└── background
 
-ShizukuMikoNight/
-├── ShizukuBackground-300.png
-└── theme.ini
+ShizukuMikoNight
+├── theme.ini
+└── background
 ```
 
-`ShizukuMikoNight/theme.ini` may contain:
+If `ShizukuMikoNight` specifies:
 
 ```ini
 [Info]
-Author=...
 ParentTheme1=ShizukuMiko
+```
+
+and does not contain the character resources, those resources can be
+inherited from `ShizukuMiko`.
+
+This allows a theme to override only the resources it actually changes.
+
+---
+
+# `[Color]`
+
+The `[Color]` section defines the theme's UI colors.
+
+The values use RGB hexadecimal notation.
+
+```ini
+[Color];RGB
+LabelText=0x000000;
+ButtonText=0x000000;
+ListText1=0x000000;
+ListText2=0x000000;
+ListBk1=0xFFFFFF;
+ListBk2=0xF8F8F8;
+ListLine1=0xE0E0E0;
+ListLine2=0xF0F0F0;
+Glass=0xFFFFFF;
+```
+
+The supported entries are:
+
+| Key          | Purpose                      |
+| ------------ | ---------------------------- |
+| `LabelText`  | Label text color             |
+| `ButtonText` | Button text color            |
+| `ListText1`  | First list text color        |
+| `ListText2`  | Second list text color       |
+| `ListBk1`    | First list background color  |
+| `ListBk2`    | Second list background color |
+| `ListLine1`  | First list line color        |
+| `ListLine2`  | Second list line color       |
+| `Glass`      | Glass / translucent UI color |
+
+For example, a dark theme may use:
+
+```ini
+[Color];RGB
+LabelText=0xFFFFFF;
+ButtonText=0x000000;
+ListText1=0xFFFFFF;
+ListText2=0xFFFFFF;
+ListBk1=0x202020;
+ListBk2=0x333333;
+ListLine1=0x535353;
+ListLine2=0x444444;
+Glass=0x202020;
+```
+
+---
+
+# `[Alpha]`
+
+The `[Alpha]` section controls transparency.
+
+```ini
+[Alpha]
+GlassAlpha=128;
+```
+
+## `GlassAlpha`
+
+Controls the alpha value used by the glass UI.
+
+The value is an integer alpha value.
+
+For example:
+
+```ini
+GlassAlpha=128;
+```
+
+represents a partially transparent glass effect.
+
+---
+
+# Minimal `theme.ini`
+
+A minimal standalone theme can look like:
+
+```ini
+[Info]
+Author=YourName
+
+[Color];RGB
+LabelText=0x000000;
+ButtonText=0x000000;
+ListText1=0x000000;
+ListText2=0x000000;
+ListBk1=0xFFFFFF;
+ListBk2=0xF8F8F8;
+ListLine1=0xE0E0E0;
+ListLine2=0xF0F0F0;
+Glass=0xFFFFFF;
+
+[Alpha]
+GlassAlpha=128;
+```
+
+---
+
+# Theme with Inheritance
+
+A Minimal Theme can specify parent themes:
+
+```ini
+[Info]
+Author=YourName
+ParentTheme1=ShizukuMiko
+ParentTheme2=ShizukuHotaru
 
 [Color];RGB
 LabelText=0xFFFFFF;
@@ -202,23 +255,36 @@ Glass=0x202020;
 GlassAlpha=128;
 ```
 
-The local `ShizukuBackground-300.png` overrides the parent's background, while the status images can be inherited from `ShizukuMiko`.
+This theme can inherit resources from its parent themes while overriding
+its own color configuration.
 
-## AI Generation Rules
+---
 
-When generating `ParentTheme<N>` entries:
+# AI Rules
 
-1. `ParentTheme<N>` is optional.
-2. Parent themes must be numbered starting from `1`.
-3. Parent numbers must be sequential.
-4. Parent order is significant.
-5. Do not reorder parents unless explicitly requested.
-6. Do not create unnecessary parent relationships.
-7. Prefer the most relevant parent as `ParentTheme1`.
-8. Use additional parents only when they provide resources that are actually needed.
-9. Do not copy inherited resources into the current theme unnecessarily.
-10. A theme with no inheritance should omit all `ParentTheme<N>` entries.
+When creating `theme.ini`:
 
-The general rule is:
+1. Preserve the section names exactly.
+2. Preserve supported key names exactly.
+3. Use RGB hexadecimal values in `[Color]`.
+4. Treat `ParentTheme<N>` as optional.
+5. Parent theme numbers must be sequential.
+6. Parent theme order matters.
+7. The current theme takes priority over inherited resources.
+8. Do not add parent themes merely to avoid generating resources when a
+   Full Theme is requested.
+9. Use inheritance when creating a Minimal Theme.
+10. Do not invent undocumented keys.
 
-> **Local resources override inherited resources; inherited resources are resolved in `ParentTheme<N>` order.**
+---
+
+# Validation Checklist
+
+* [ ] `[Info]` exists
+* [ ] `Author` is specified where appropriate
+* [ ] `ParentTheme<N>` numbering is sequential
+* [ ] Parent theme order is intentional
+* [ ] `[Color]` uses valid RGB values
+* [ ] `[Alpha]` is correctly defined
+* [ ] No unsupported keys were invented
+* [ ] The inheritance model matches the selected theme type
