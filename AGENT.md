@@ -1,235 +1,346 @@
 # CrystalDiskInfo Theme Prompt
 
-> Use AI to design and generate custom themes for [CrystalDiskInfo](https://crystalmark.info/en/software/crystaldiskinfo/).
+This repository provides specifications for creating custom themes for
+CrystalDiskInfo with AI.
 
-Generate anime, mascot, character, minimalist, dark, or completely original CrystalDiskInfo themes with AI.
-
-The project provides structured specifications that describe CrystalDiskInfo's theme resources, allowing an AI agent to understand **what each asset is, where it is used, and how the assets should work together**.
+The human should describe the desired theme.
+The agent is responsible for understanding the CrystalDiskInfo theme
+format, selecting the appropriate theme type, generating the required
+assets, and assembling the final theme.
 
 ---
 
-## 📦 Installing a Theme
+## Core Rules
 
-CrystalDiskInfo themes are installed under:
+### 1. Read the relevant specification first
 
-`<software>\CdiResource\themes\<theme name>\`
+Before creating or modifying a theme, determine which specification
+applies:
 
-For example:
+- `basic_theme.md` — character-focused themes
+- `minimal_theme.md` — themes inheriting from an existing theme
+- `full_theme.md` — complete, self-contained themes
+- `theme_ini.md` — `theme.ini` configuration and inheritance
 
+Read the relevant specification before generating resources.
+
+Do not invent resource names, dimensions, or formats.
+
+---
+
+### 2. Master artwork first
+
+When a resource has multiple size variants, **do not independently
+generate every size with an image-generation model**.
+
+Generate the highest-resolution source artwork first, then derive the
+smaller variants programmatically.
+
+For the character resources described in `basic_theme.md`:
+
+```text
+-300
+  ↓
+-250
+-200
+-150
+-125
+-100
+````
+
+The `-300` image is the master artwork.
+
+Use Python/Pillow or another lossless image-processing workflow to create
+the smaller variants.
+
+This is a hard requirement.
+
+Do NOT do this:
+
+```text
+AI → -300
+AI → -250
+AI → -200
+AI → -150
+AI → -125
+AI → -100
 ```
-CrystalDiskInfo\
-└── CdiResource\
-    └── themes\
-        └── MyTheme\
-            ├── theme.ini
-            ├── SDdiskStatusGood100-100.png
-            ├── SDdiskStatusGood100-125.png
-            ├── ...
-            └── ShizukuBackground-300.png
+
+Do this instead:
+
+```text
+AI → -300 master artwork
+             │
+             ▼
+        image processing
+             │
+       ┌─────┼─────┬─────┬─────┬─────┐
+       ▼     ▼     ▼     ▼     ▼     ▼
+     -250  -200  -150  -125  -100
 ```
 
-Where `<software>` is the directory containing your
-CrystalDiskInfo installation.
+This prevents visual inconsistencies between scale variants.
 
-After placing the theme in the themes directory, it can be selected
-from CrystalDiskInfo's theme settings.
+---
 
-## 📚 Theme Specifications
+### 3. Preserve transparency
 
-Choose the specification according to the type of theme you want to create.
+Character illustrations are transparent-background assets unless the
+relevant specification explicitly says otherwise.
+
+Do not add a solid background to character assets.
+
+The background is a separate resource.
+
+---
+
+### 4. Character states are variations of one character
+
+When a theme contains multiple character status resources, they should
+represent the same character and visual identity.
+
+Different states should primarily be communicated through:
+
+* facial expression
+* pose
+* gesture
+* action
+* emotional state
+* small props or effects
+
+Do not generate five unrelated characters merely because they correspond
+to five different status states.
+
+---
+
+### 5. Backgrounds are different from character assets
+
+A theme background is a complete scene/environment, not a character
+illustration.
+
+For Basic Themes, the background should be designed together with the
+character composition.
+
+Unless the specification says otherwise, leave suitable visual space
+for the character to be displayed on the left side of the background.
+
+---
+
+## Theme Selection
+
+Choose the theme type according to the user's request.
 
 ### Basic Theme
 
-A character-focused theme consisting of:
+Use when the user wants a new character-focused theme.
 
-- Character / mascot illustrations
-- Disk health status illustrations
-- A large background
-- `theme.ini`
+Read:
 
-The status illustrations are character assets rather than generic icons.
+```text
+basic_theme.md
+theme_ini.md
+```
 
-👉 **[basic_theme.md](./basic_theme.md)**
+Typical workflow:
+
+```text
+Theme concept
+    ↓
+Character design
+    ↓
+Five status variations
+    ↓
+Generate master character artwork
+    ↓
+Generate derived size variants
+    ↓
+Generate background
+    ↓
+Create theme.ini
+```
 
 ---
 
 ### Minimal Theme
 
-A lightweight theme based on an existing theme.
+Use when the user wants to modify, recolor, reskin, or extend an
+existing theme.
 
-Instead of duplicating every resource, a Minimal Theme:
-
-```text
-Parent Theme
-     +
-Only the resources you want to change
-````
-
-For example:
+Read:
 
 ```text
-ShizukuMiko/
-├── ...all original resources...
-└── theme.ini
-
-ShizukuMikoNight/
-├── ShizukuBackground-300.png
-└── theme.ini
+minimal_theme.md
+theme_ini.md
 ```
 
-The unchanged resources are inherited from the parent theme.
+Do not copy resources that can be inherited.
 
-👉 **[minimal_theme.md](./minimal_theme.md)**
+Only generate or include resources that actually need to change.
+
+If a changed resource has multiple size variants, generate its master
+variant first and derive the remaining variants programmatically.
 
 ---
 
 ### Full Theme
 
-A completely self-contained theme.
+Use when the user explicitly wants a completely independent theme.
 
-A Full Theme provides its own complete set of CrystalDiskInfo visual resources instead of relying on another theme.
+Read:
 
 ```text
-Full Theme
-├── theme.ini
-├── disk resources
-├── disk status resources
-├── temperature resources
-├── volume resources
-├── navigation resources
-├── logo
-├── background
-└── other resources
+full_theme.md
+theme_ini.md
 ```
 
-👉 **[full_theme.md](./full_theme.md)**
+A Full Theme must provide every resource required by its specification.
+
+Do not assume that every resource family has the same dimensions or
+scale variants. Follow the resource-specific rules in
+`full_theme.md`.
 
 ---
 
-### `theme.ini`
+## Image Generation Workflow
 
-The configuration file of a CrystalDiskInfo theme.
+When image generation is required:
 
-It controls things such as:
+1. Identify the resource being generated.
+2. Read its specification.
+3. Determine the master resolution and required derived resolutions.
+4. Generate the master artwork.
+5. Verify the master artwork's dimensions and transparency.
+6. Generate smaller variants using Python/Pillow.
+7. Verify every generated file.
+8. Preserve the exact required filename.
+9. Continue with the next resource.
 
-* Author information
-* Parent themes
-* UI colors
-* Glass color
-* Transparency
+Do not ask an image-generation model to repeatedly redraw the same asset
+at different resolutions.
+
+---
+
+## Python Image Processing
+
+Pillow is the preferred tool for generating derived image variants.
 
 Example:
 
-```ini
-[Info]
-Author=My Theme
-ParentTheme1=ShizukuMiko
+```python
+from PIL import Image
 
-[Color];RGB
-LabelText=0xFFFFFF;
-ButtonText=0x000000;
-ListText1=0xFFFFFF;
-ListText2=0xFFFFFF;
-ListBk1=0x202020;
-ListBk2=0x333333;
-ListLine1=0x535353;
-ListLine2=0x444444;
-Glass=0x202020;
+sizes = {
+    300: (384, 576),
+    250: (320, 480),
+    200: (256, 384),
+    150: (192, 288),
+    125: (160, 240),
+    100: (128, 192),
+}
 
-[Alpha]
-GlassAlpha=128;
+source = Image.open("SDdiskStatusGood100-300.png")
+
+for scale, size in sizes.items():
+    image = source.resize(size, Image.Resampling.LANCZOS)
+    image.save(f"SDdiskStatusGood100-{scale}.png")
 ```
 
-👉 **[theme_ini.md](./theme_ini.md)**
+Preserve the source image's alpha channel.
+
+Do not apply unnecessary transformations while generating size
+variants.
 
 ---
 
-## 🧩 Which One Should I Use?
+## Resource Names
 
-| I want to...                          | Use                                      |
-| ------------------------------------- | ---------------------------------------- |
-| Create a character-based theme        | [`basic_theme.md`](./basic_theme.md)     |
-| Modify an existing theme              | [`minimal_theme.md`](./minimal_theme.md) |
-| Create a completely independent theme | [`full_theme.md`](./full_theme.md)       |
-| Understand `theme.ini`                | [`theme_ini.md`](./theme_ini.md)         |
+Resource filenames are part of the CrystalDiskInfo theme format.
+
+Preserve them exactly as specified.
+
+Do not:
+
+* rename resources for convenience
+* invent alternative filenames
+* change capitalization
+* omit required variants
+* add arbitrary suffixes
 
 ---
 
-## 🤖 Using with an AI Agent
+## Theme Directory
 
-You can give the corresponding specification to your AI agent together with your theme concept.
+A completed theme is installed at:
+
+```text
+<software>\CdiResource\themes\<theme name>\
+```
 
 For example:
 
 ```text
-Read basic_theme.md.
-
-Create a CrystalDiskInfo theme based on:
-"Summer festival fox girl"
-
-Design:
-- one consistent character
-- Good100
-- Good
-- Caution
-- Bad
-- Unknown
-- a 3000×3000 background
-- matching theme.ini
-
-Follow the resource names, dimensions, variants,
-and generation rules defined in basic_theme.md.
+CrystalDiskInfo\
+└── CdiResource\
+    └── themes\
+        └── MyTheme\
+            ├── theme.ini
+            ├── ...
+            └── ShizukuBackground-300.png
 ```
 
-For an existing theme:
+The final generated files should form a valid theme directory.
+
+---
+
+## Validation
+
+Before declaring a theme complete:
+
+* Verify all required files exist.
+* Verify filenames exactly match the specification.
+* Verify image dimensions.
+* Verify transparency where required.
+* Verify that derived variants were generated from their master artwork.
+* Verify that no unnecessary resources were duplicated in Minimal Themes.
+* Verify `theme.ini`.
+* Verify parent-theme relationships.
+* Verify that the final directory can be placed under:
 
 ```text
-Read minimal_theme.md and theme_ini.md.
-
-Create a dark variant of ShizukuMiko.
-
-Keep all unchanged resources inherited from ShizukuMiko.
-Only generate resources that actually need to change.
+<software>\CdiResource\themes\<theme name>\
 ```
 
-For a completely new theme:
+---
+
+## Important
+
+The specifications in this repository are authoritative for their
+respective resource types.
+
+When a user asks for a theme, do not merely describe what should be
+generated.
+
+Actually follow the specification and produce the required resources or
+generation steps.
+
+The intended workflow is:
 
 ```text
-Read full_theme.md and theme_ini.md.
-
-Create a complete CrystalDiskInfo theme based on:
-"Cyberpunk neon city"
-
-Generate the complete resource set defined by the specification.
+Human describes the theme
+        ↓
+Agent reads AGENT.md
+        ↓
+Agent reads the relevant specification
+        ↓
+Agent designs the theme
+        ↓
+Generate master artwork
+        ↓
+Programmatically derive variants
+        ↓
+Assemble theme.ini and resources
+        ↓
+Validate
+        ↓
+Complete CrystalDiskInfo theme
 ```
-
----
-
-## 🎨 Design Philosophy
-
-The goal is not simply to generate a collection of images.
-
-A good CrystalDiskInfo theme should feel like:
-
-> **one character, one world, and one coherent visual language.**
-
-Character illustrations, status states, backgrounds, colors, and UI
-elements should all belong to the same theme.
-
----
-
-## 📖 Specifications
-
-* [`basic_theme.md`](./basic_theme.md)
-* [`minimal_theme.md`](./minimal_theme.md)
-* [`full_theme.md`](./full_theme.md)
-* [`theme_ini.md`](./theme_ini.md)
-
----
-
-## CrystalDiskInfo
-
-This project provides prompts and specifications for creating themes for
-[CrystalDiskInfo](https://crystalmark.info/en/software/crystaldiskinfo/).
-
-CrystalDiskInfo is developed by **hiyohiyo**.
