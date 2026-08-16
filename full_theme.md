@@ -1,552 +1,282 @@
 # CrystalDiskInfo Full Theme
 
-A **Full Theme** is a self-contained CrystalDiskInfo theme that provides its own complete set of visual resources instead of relying on parent themes for the main UI assets.
+A Full Theme is a completely self-contained CrystalDiskInfo theme.
 
-Unlike a lightweight or inherited theme, a Full Theme should contain the resources required to render the CrystalDiskInfo interface independently.
+Unlike a Minimal Theme, a Full Theme should not rely on another theme to
+provide its required resources.
 
 ---
 
-## Full Theme Structure
+## Basic Concept
 
-A Full Theme is composed of:
+A Full Theme contains all resources required by its theme definition:
 
 ```text
 Full Theme
 ├── theme.ini
-│
-├── Disk Health
-│   ├── diskBad
-│   ├── diskCaution
-│   ├── diskGood
-│   ├── diskGoodGreen
-│   ├── diskUnknown
-│   ├── diskBadMini
-│   ├── diskCautionMini
-│   ├── diskGoodMini
-│   ├── diskGoodGreenMini
-│   └── diskUnknownMini
-│
-├── Disk Status
-│   ├── diskStatusBad
-│   ├── diskStatusCaution
-│   ├── diskStatusGood
-│   ├── diskStatusGoodGreen
-│   └── diskStatusUnknown
-│
-├── Temperature
-│   ├── temperatureBad
-│   ├── temperatureCaution
-│   ├── temperatureGood
-│   ├── temperatureGoodGreen
-│   └── temperatureUnknown
-│
-├── Volume
-│   ├── volumeL
-│   ├── volumeM
-│   ├── volumeS
-│   └── volumeZ
-│
-├── Navigation / Controls
-│   ├── nextDisk
-│   ├── preDisk
-│   ├── playSound
-│   └── selectSound
-│
-├── Branding
-│   ├── logo
-│   ├── ShizukuBackground
-│   ├── ShizukuAbout
-│   └── ShizukuCopyright
-│
-└── Other resources
-```
+├── required image resources
+└── all required variants
+````
 
-## The resource families above are based on an existing full CrystalDiskInfo theme. The reference theme contains these resource groups and their six standard size variants.
+The exact resources depend on the resource families supported by the
+theme.
 
-# Standard Image Sizes
-
-Most UI image resources use six size variants:
-
-```text
-100
-125
-150
-200
-250
-300
-```
-
-For example:
-
-```text
-logo-100.png
-logo-125.png
-logo-150.png
-logo-200.png
-logo-250.png
-logo-300.png
-```
-
-The reference Full Theme follows this six-size pattern for `logo`, navigation controls, status resources, temperature resources, and volume resources.
-A resource family should normally provide all six variants unless the CrystalDiskInfo resource itself has a different specification.
+Do not assume that every resource uses the same dimensions or the same
+set of size variants.
 
 ---
 
-# Disk Health Resources
+# Resource Variants
 
-The main disk-health resources are:
+Some CrystalDiskInfo resources use numeric filename suffixes such as:
 
 ```text
-diskBad
-diskCaution
-diskGood
-diskGoodGreen
-diskUnknown
+-300
+-250
+-200
+-150
+-125
+-100
 ```
 
-Each uses six sizes:
+These suffixes represent predefined size variants for the corresponding
+resource family.
+
+They do **not** mean that every resource in a Full Theme necessarily
+uses the same dimensions.
+
+Always follow the dimensions specified for the particular resource
+family.
+
+---
+
+# Master Artwork
+
+When a resource family uses multiple size variants, create one master
+artwork at the highest required resolution whenever the specification
+defines such a master.
+
+For the character resources used by Basic Themes:
 
 ```text
--100
--125
--150
--200
--250
 -300
 ```
 
-For example:
+is the master artwork.
+
+Its dimensions are:
 
 ```text
-diskBad-100.png
-diskBad-125.png
-diskBad-150.png
-diskBad-200.png
-diskBad-250.png
-diskBad-300.png
+384 × 576
 ```
 
-The reference theme contains the corresponding `diskBad`, `diskCaution`, `diskGood`, and related resource families.
+The smaller character variants are:
+
+| Suffix | Canvas Size |
+| ------ | ----------: |
+| `-300` |   384 × 576 |
+| `-250` |   320 × 480 |
+| `-200` |   256 × 384 |
+| `-150` |   192 × 288 |
+| `-125` |   160 × 240 |
+| `-100` |   128 × 192 |
+
+Generate the master first:
+
+```text
+Generate master artwork
+        ↓
+Python / Pillow
+        ↓
+-250
+-200
+-150
+-125
+-100
+```
+
+Do not independently redraw the same artwork at every size.
 
 ---
 
-# Mini Disk Health Resources
+# Resource-Specific Dimensions
 
-Some disk-health resources also have a `Mini` variant:
+The numeric suffix must not be treated as a universal image dimension.
 
-```text
-diskBadMini
-diskCautionMini
-diskGoodMini
-diskGoodGreenMini
-diskUnknownMini
-```
-
-For example:
+For example, the character resources use:
 
 ```text
-diskGoodMini-100.png
-diskGoodMini-125.png
-diskGoodMini-150.png
-diskGoodMini-200.png
-diskGoodMini-250.png
-diskGoodMini-300.png
+-300 → 384 × 576
+-250 → 320 × 480
+-200 → 256 × 384
+-150 → 192 × 288
+-125 → 160 × 240
+-100 → 128 × 192
 ```
 
-These should be treated as a separate resource family.
+Other CrystalDiskInfo resources may have different dimensions or may
+not use these variants at all.
 
-## The `Mini` assets should visually correspond to their normal counterparts while being designed for the smaller UI representation.
+Therefore:
 
-# Disk Status Resources
+> Always determine the dimensions from the specification of the
+> resource being generated.
 
-The Full Theme provides status indicators:
-
-```text
-diskStatusBad
-diskStatusCaution
-diskStatusGood
-diskStatusGoodGreen
-diskStatusUnknown
-```
-
-Each has six sizes:
-
-```text
-100
-125
-150
-200
-250
-300
-```
-
-For example:
-
-```text
-diskStatusBad-100.png
-diskStatusBad-125.png
-diskStatusBad-150.png
-diskStatusBad-200.png
-diskStatusBad-250.png
-diskStatusBad-300.png
-```
-
-The reference theme contains all five status families.
+Never infer a resource's dimensions solely from its filename.
 
 ---
 
-# Temperature Resources
+# Character Resources
 
-Temperature indicators use the following families:
+When the Full Theme contains character status illustrations, they
+should follow the character-resource rules defined by
+`basic_theme.md`.
 
-```text
-temperatureBad
-temperatureCaution
-temperatureGood
-temperatureGoodGreen
-temperatureUnknown
-```
+Character images should:
 
-Each uses six standard sizes.
+* use transparent backgrounds
+* preserve the same character identity
+* use different expressions, poses, or actions for different states
+* remain visually consistent
+* use a master artwork for their size variants
 
-Example:
-
-```text
-temperatureGood-100.png
-temperatureGood-125.png
-temperatureGood-150.png
-temperatureGood-200.png
-temperatureGood-250.png
-temperatureGood-300.png
-```
-
-The visual semantics should correspond to the disk-health status colors and overall theme design.
-
-The reference theme contains all five temperature states.
+Do not create unrelated characters for different disk-health states.
 
 ---
 
-# Volume Resources
+# Background Resources
 
-Volume indicators use four resource families:
+A theme background is a separate scene/environment resource.
 
-```text
-volumeL
-volumeM
-volumeS
-volumeZ
-```
-
-Each provides six sizes:
-
-```text
-100
-125
-150
-200
-250
-300
-```
-
-For example:
-
-```text
-volumeL-100.png
-volumeL-125.png
-volumeL-150.png
-volumeL-200.png
-volumeL-250.png
-volumeL-300.png
-```
-
-The reference theme contains all four volume families.
-
----
-
-# Navigation and Control Resources
-
-The Full Theme can provide resources for disk navigation and sound controls:
-
-```text
-nextDisk
-preDisk
-playSound
-selectSound
-```
-
-Each uses the six standard sizes:
-
-```text
-100
-125
-150
-200
-250
-300
-```
-
-For example:
-
-```text
-nextDisk-100.png
-nextDisk-125.png
-nextDisk-150.png
-nextDisk-200.png
-nextDisk-250.png
-nextDisk-300.png
-```
-
-## The reference theme contains all four control families.
-
-# Logo
-
-The theme may provide its own CrystalDiskInfo logo:
-
-```text
-logo-100.png
-logo-125.png
-logo-150.png
-logo-200.png
-logo-250.png
-logo-300.png
-```
-
-The logo should visually match the rest of the theme.
-
-The reference Full Theme contains all six logo sizes.
-
----
-
-# Shizuku Resources
-
-Themes using the Shizuku-style interface may provide additional resources:
+For the Basic Theme background:
 
 ```text
 ShizukuBackground-300.png
-ShizukuAbout-300.png
-
-ShizukuCopyright-100.png
-ShizukuCopyright-125.png
-ShizukuCopyright-150.png
-ShizukuCopyright-200.png
-ShizukuCopyright-250.png
-ShizukuCopyright-300.png
 ```
 
-The reference theme contains `ShizukuAbout-300.png`, `ShizukuBackground-300.png`, and six `ShizukuCopyright` variants.
-
-These resources are not interchangeable with ordinary disk-status assets.
-
----
-
-# No Parent Theme Required
-
-A Full Theme is intended to be self-contained.
-
-Therefore, it should normally **not depend on `ParentTheme<N>` for its primary resources**.
-
-A standalone Full Theme can use:
-
-```ini
-[Info]
-Author=My Theme
-```
-
-rather than:
-
-```ini
-[Info]
-Author=My Theme
-ParentTheme1=SomeOtherTheme
-```
-
-If a theme intentionally inherits resources, it should generally be classified as an **Inherited Theme** rather than a fully standalone Full Theme.
-
----
-
-# Resource Consistency
-
-All resources must belong to the same visual design system.
-
-For example, if the theme is:
-
-> Cyberpunk neon
-
-then:
+is typically:
 
 ```text
-diskGood
-diskCaution
-diskBad
-temperatureGood
-temperatureBad
-logo
-volume
-navigation
-background
+3000 × 3000 px
 ```
 
-should all use the same visual language.
+The background should be designed as a complete environment and should
+visually match the character assets.
 
-Do not generate each resource family as an unrelated illustration.
+When used with a character-focused theme, reserve suitable space for the
+character, particularly on the left side where appropriate.
 
-Maintain consistency in:
-
-* color palette
-* lighting
-* line style
-* rendering style
-* character / mascot design
-* iconography
-* perspective
-* visual density
-* transparency
-* decorative elements
-
----
-
-# Status Consistency
-
-Related states should be visually distinguishable.
-
-At minimum, the following semantic distinction should remain clear:
-
-```text
-Good
-GoodGreen
-Caution
-Bad
-Unknown
-```
-
-For example:
-
-```text
-Good       → normal / healthy
-GoodGreen  → healthy / positive variant
-Caution    → warning
-Bad        → critical
-Unknown    → unknown / unavailable
-```
-
-The exact artistic representation may vary according to the theme.
-
-A cute character theme could express the states through character expressions.
-
-A cyberpunk theme could express them through colors and warning symbols.
-
-A minimalist theme could express them through simple geometric indicators.
-
----
-
-# Resolution Consistency
-
-The six size variants are not six independent designs.
-
-They are different resolutions of the same resource.
-
-For example:
-
-```text
-diskGood-100.png
-diskGood-125.png
-diskGood-150.png
-diskGood-200.png
-diskGood-250.png
-diskGood-300.png
-```
-
-must represent the same `diskGood` design.
-
-Do not alter the character, icon, composition, or semantic meaning between resolutions.
-
-Higher-resolution assets may contain more detail, but should remain visually equivalent.
-
----
-
-# Filename Rules
-
-Filenames are part of the CrystalDiskInfo theme resource interface.
-
-**Do not rename resource files.**
-
-Correct:
-
-```text
-diskGood-100.png
-```
-
-Incorrect:
-
-```text
-disk-good-100.png
-DiskGood100.png
-diskGood_100.png
-goodDisk-100.png
-```
-
-The resource family name and size suffix must remain exactly as specified.
+The background is not a transparent character asset.
 
 ---
 
 # `theme.ini`
 
-A Full Theme must include:
+A Full Theme requires its own `theme.ini`.
 
-```text
-theme.ini
+Example:
+
+```ini
+[Info]
+Author=YourName
+
+[Color]
+LabelText=0x000000;
+ButtonText=0x000000;
+ListText1=0x000000;
+ListText2=0x000000;
+ListBk1=0xFFFFFF;
+ListBk2=0xF8F8F8;
+ListLine1=0xE0E0E0;
+ListLine2=0xF0F0F0;
+Glass=0xFFFFFF;
+
+[Alpha]
+GlassAlpha=128;
 ```
 
-The configuration defines:
+The actual sections and values depend on the desired theme.
 
-* theme metadata
-* optional inheritance
-* interface colors
-* glass color
-* glass transparency
+See:
 
-See [`theme_ini.md`](./theme_ini.md) for the complete `theme.ini` specification.
+```text
+theme_ini.md
+```
+
+for the complete `theme.ini` rules.
 
 ---
 
-# Full Theme Generation
+# Inheritance
 
-When an AI is asked to generate a Full Theme, it should follow this workflow:
+A Full Theme is intended to be self-contained.
+
+Do not use parent-theme inheritance merely to avoid including resources
+that a Full Theme is expected to contain.
+
+If the user wants to reuse existing resources through inheritance,
+create a Minimal Theme instead.
+
+Conceptually:
+
+```text
+Full Theme:
+
+Theme
+ ├── theme.ini
+ ├── resource A
+ ├── resource B
+ ├── resource C
+ └── resource D
+
+
+Minimal Theme:
+
+Theme
+ ├── theme.ini
+ └── changed resource A
+          │
+          └── inherited from Parent Theme
+```
+
+---
+
+# Recommended Workflow
 
 ```text
 Theme Concept
-      │
-      ▼
-Visual Identity
-      │
-      ├── Color Palette
-      ├── Typography / Icon Style
-      ├── Character / Mascot
-      ├── Lighting
-      └── Decorative Elements
-      │
-      ▼
-Generate Resource Families
-      │
-      ├── Disk Health
-      ├── Disk Status
-      ├── Temperature
-      ├── Volume
-      ├── Navigation
-      ├── Logo
-      └── Shizuku Resources
-      │
-      ▼
-Generate All Required Size Variants
-      │
-      ▼
-Generate theme.ini
-      │
-      ▼
-Validate Filenames
-      │
-      ▼
-Complete Full Theme
+      ↓
+Determine required resource families
+      ↓
+Read the corresponding specifications
+      ↓
+Design the visual system
+      ↓
+Generate master artworks
+      ↓
+Generate derived size variants
+      ↓
+Create remaining resources
+      ↓
+Create theme.ini
+      ↓
+Verify all required resources
+      ↓
+Validate the complete theme
+```
+
+For character-focused themes:
+
+```text
+Character Design
+      ↓
+Five Status Variations
+      ↓
+Generate 384 × 576 Masters
+      ↓
+Generate Smaller Variants
+      ↓
+Generate 3000 × 3000 Background
 ```
 
 ---
@@ -555,75 +285,60 @@ Complete Full Theme
 
 When generating a Full Theme:
 
-1. Treat the theme as one coherent visual system.
-2. Generate all required resource families.
-3. Generate all required size variants.
-4. Preserve exact filenames.
-5. Do not replace missing assets with placeholders.
-6. Do not silently omit resource families.
-7. Do not use parent themes for resources that the Full Theme is expected to provide itself.
-8. Keep all resolution variants visually consistent.
-9. Keep status semantics consistent.
-10. Ensure `theme.ini` matches the generated visual palette.
-11. Ensure the background, logo, icons, indicators, and status graphics belong to the same theme.
-12. Validate the final directory against the resource specification before considering generation complete.
+1. Read `full_theme.md` and the specifications for each resource family.
+2. Determine every resource required by the selected theme.
+3. Do not assume that every resource uses the same dimensions.
+4. Generate master artwork before derived variants.
+5. Generate smaller variants programmatically whenever applicable.
+6. Preserve transparency for resources that require it.
+7. Preserve exact filenames.
+8. Do not omit required resources.
+9. Do not duplicate unrelated resources.
+10. Keep all assets visually consistent.
+11. Create an independent `theme.ini`.
+12. Do not rely on a parent theme unless the theme specification
+    explicitly allows it.
 
 ---
 
-# Full Theme Checklist
+# Installation
+
+Place the completed theme in:
 
 ```text
-[ ] theme.ini
-
-[ ] diskBad × 6
-[ ] diskCaution × 6
-[ ] diskGood × 6
-[ ] diskGoodGreen × 6
-[ ] diskUnknown × 6
-
-[ ] diskBadMini × 6
-[ ] diskCautionMini × 6
-[ ] diskGoodMini × 6
-[ ] diskGoodGreenMini × 6
-[ ] diskUnknownMini × 6
-
-[ ] diskStatusBad × 6
-[ ] diskStatusCaution × 6
-[ ] diskStatusGood × 6
-[ ] diskStatusGoodGreen × 6
-[ ] diskStatusUnknown × 6
-
-[ ] temperatureBad × 6
-[ ] temperatureCaution × 6
-[ ] temperatureGood × 6
-[ ] temperatureGoodGreen × 6
-[ ] temperatureUnknown × 6
-
-[ ] volumeL × 6
-[ ] volumeM × 6
-[ ] volumeS × 6
-[ ] volumeZ × 6
-
-[ ] logo × 6
-
-[ ] nextDisk × 6
-[ ] preDisk × 6
-[ ] playSound × 6
-[ ] selectSound × 6
-
-[ ] ShizukuBackground-300.png
-[ ] ShizukuAbout-300.png
-[ ] ShizukuCopyright × 6
+<software>\CdiResource\themes\<theme name>\
 ```
 
-The exact resource set may be extended when additional CrystalDiskInfo resources are identified. A Full Theme should follow the actual resource specification rather than assuming that every theme contains exactly the same files.
+For example:
+
+```text
+CrystalDiskInfo\
+└── CdiResource\
+    └── themes\
+        └── MyTheme\
+            ├── theme.ini
+            ├── ...
+            └── required resources
+```
 
 ---
 
-# Design Principle
+# Validation Checklist
 
-A Full Theme is:
+Before considering a Full Theme complete:
 
-> **A complete replacement resource set for the CrystalDiskInfo interface, with every visual component designed as part of one coherent theme.**
+* [ ] `theme.ini` exists
+* [ ] All required resource families are present
+* [ ] Every resource uses the correct filename
+* [ ] Every resource uses the correct dimensions
+* [ ] Multi-size resources have all required variants
+* [ ] Master artwork exists where applicable
+* [ ] Smaller variants were derived from the master artwork
+* [ ] Transparent resources preserve transparency
+* [ ] Character resources remain visually consistent
+* [ ] Background resources are correctly sized
+* [ ] The theme does not unnecessarily depend on another theme
+* [ ] `theme.ini` follows `theme_ini.md`
+* [ ] The complete theme can be placed under
+  `<software>\CdiResource\themes\<theme name>\`
 
-Unlike an inherited theme, it should be possible to install the Full Theme without relying on another theme's image resources.
