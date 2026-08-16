@@ -1,15 +1,15 @@
 # CrystalDiskInfo Theme Prompt
 
-[English](./README.md) | [简体中文](./README.zh.md)
+[简体中文](./README.zh.md) | [English](./README.md)
 
 > Let AI make your CrystalDiskInfo theme.
 
-A collection of specifications that teaches AI agents how to create
-custom [CrystalDiskInfo](https://crystalmark.info/en/software/crystaldiskinfo/) themes.
+A set of specifications for teaching AI agents how to create custom
+[CrystalDiskInfo](https://crystalmark.info/en/software/crystaldiskinfo/) themes.
 
 You describe what you want.
 
-**The AI figures out the rest.**
+**The AI handles the rest.**
 
 ---
 
@@ -17,7 +17,7 @@ You describe what you want.
 
 Give **[`AGENT.md`](./AGENT.md)** to your AI agent.
 
-Then simply tell it what kind of theme you want.
+Then describe the theme you want.
 
 For example:
 
@@ -25,16 +25,14 @@ For example:
 Create a CrystalDiskInfo theme based on a cute fox girl.
 
 I want:
-- a consistent character
-- different expressions for Good / Caution / Bad / Unknown
+- the same character throughout the theme
+- different expressions and poses for Good / Caution / Bad / Unknown
 - a matching background
-- a cute visual style
+- a coherent cute visual style
 ````
 
-That's it.
-
 The agent will read `AGENT.md` and the relevant specifications,
-then generate the theme accordingly.
+then create the required theme resources.
 
 You can also ask it to modify an existing theme:
 
@@ -49,21 +47,33 @@ Don't duplicate resources that can be inherited.
 
 ## 📚 Specifications
 
-| File                                     | Description                       |
-| ---------------------------------------- | --------------------------------- |
-| [`AGENT.md`](./AGENT.md)                 | Entry point for AI agents         |
-| [`basic_theme.md`](./basic_theme.md)     | Character-focused themes          |
-| [`minimal_theme.md`](./minimal_theme.md) | Themes based on an existing theme |
-| [`full_theme.md`](./full_theme.md)       | Completely self-contained themes  |
-| [`theme_ini.md`](./theme_ini.md)         | `theme.ini` and theme inheritance |
+| File                                     | Description                                |
+| ---------------------------------------- | ------------------------------------------ |
+| [`AGENT.md`](./AGENT.md)                 | Instructions and workflow for AI agents    |
+| [`basic_theme.md`](./basic_theme.md)     | Character-focused themes                   |
+| [`minimal_theme.md`](./minimal_theme.md) | Themes based on existing themes            |
+| [`full_theme.md`](./full_theme.md)       | Completely self-contained themes           |
+| [`theme_ini.md`](./theme_ini.md)         | `theme.ini`, colors, alpha and inheritance |
+
+---
+
+## 🎨 Theme Types
 
 ### Basic Theme
 
-Character-focused themes with status illustrations and a background.
+A character-focused theme with:
+
+* character illustrations
+* different expressions / poses for disk states
+* a matching background
+* `theme.ini`
+
+Character artwork is generated as a high-resolution master first,
+then smaller variants are generated programmatically.
 
 ### Minimal Theme
 
-Reuse an existing theme and override only what you want to change.
+Modify an existing theme without copying everything.
 
 ```text
 Parent Theme
@@ -73,15 +83,19 @@ Changed Resources
 Minimal Theme
 ```
 
+This is useful for recolors, alternate backgrounds, seasonal variants,
+and other small modifications.
+
 ### Full Theme
 
-A completely independent theme containing its own resources.
+A completely independent theme containing all resources required by the
+theme.
 
 ---
 
-## 📂 Installing a Theme
+## 📂 Installation
 
-Place the generated theme under:
+Themes must be placed under:
 
 ```text
 <software>\CdiResource\themes\<theme name>\
@@ -90,17 +104,61 @@ Place the generated theme under:
 For example:
 
 ```text
-CrystalDiskInfo/
-└── CdiResource/
-    └── themes/
-        └── MyTheme/
+CrystalDiskInfo\
+└── CdiResource\
+    └── themes\
+        └── ShizukuMyTheme\
             ├── theme.ini
-            ├── SDdiskStatusGood100-100.png
             ├── ...
             └── ShizukuBackground-300.png
 ```
 
-Then select the theme from CrystalDiskInfo.
+### ⚠️ Theme Name Requirement
+
+**The theme directory name must start with `Shizuku`.**
+
+CrystalDiskInfo's theme scanner only recognizes themes whose directory
+name begins with:
+
+```text
+Shizuku
+```
+
+Therefore, use names such as:
+
+```text
+ShizukuFox
+ShizukuFoxNight
+ShizukuMikoNight
+ShizukuMyTheme
+```
+
+and not:
+
+```text
+FoxTheme
+MyTheme
+NightTheme
+```
+
+If the directory does not start with `Shizuku`, CrystalDiskInfo will
+not discover it as a theme.
+
+---
+
+## 🔄 Restart CrystalDiskInfo
+
+CrystalDiskInfo does **not** hot-reload themes.
+
+After installing or modifying a theme, restart CrystalDiskInfo for the
+changes to take effect.
+
+If a newly created theme does not appear:
+
+1. Check that the theme directory is under
+   `CdiResource\themes\`.
+2. Check that the directory name starts with `Shizuku`.
+3. Restart CrystalDiskInfo.
 
 ---
 
@@ -108,29 +166,48 @@ Then select the theme from CrystalDiskInfo.
 
 This repository is designed to be **AI-first**.
 
-Humans don't need to understand every CrystalDiskInfo resource name,
-image variant, or inheritance rule.
+Humans do not need to memorize CrystalDiskInfo's resource names,
+dimensions, or inheritance rules.
 
-Just provide:
+Just give your agent:
 
 ```text
 AGENT.md
 ```
 
-to your agent.
+The agent can then use the other `.md` files as its specification.
 
-The agent can then use the other specification files as its knowledge
-base.
+The intended workflow is:
+
+```text
+Human describes theme
+        ↓
+AI reads AGENT.md
+        ↓
+AI reads relevant specification
+        ↓
+Generate master artwork
+        ↓
+Generate derived variants
+        ↓
+Create theme.ini
+        ↓
+Validate
+        ↓
+Install under CdiResource\themes\Shizuku*
+        ↓
+Restart CrystalDiskInfo
+```
 
 ---
 
-## ✨ Philosophy
+## ✨ The Idea
 
-Don't manually draw every CrystalDiskInfo asset.
+Don't manually draw every size variant.
 
-Don't copy an entire theme just to change one background.
+Don't duplicate an entire theme just to change one image.
 
-Don't make five completely unrelated character illustrations.
+Don't make six independent generations of the same character.
 
 Instead:
 
@@ -146,20 +223,25 @@ One coherent visual language.
 
 ## ⭐ Contributing
 
-Feel free to contribute:
+Contributions are welcome!
 
-* Better resource documentation
-* New theme examples
-* Better AI generation rules
-* Corrections to existing specifications
-* New theme types
+You can contribute:
 
-Pull requests are welcome!
+* better resource documentation
+* new theme examples
+* improved AI generation rules
+* corrections
+* new theme specifications
+* generation tools
+
+Pull requests are welcome.
 
 ---
 
 ## 📄 License
 
 See the repository license for details.
+
+CrystalDiskInfo is developed by **hiyohiyo**.
 
 CrystalDiskInfo is developed by **hiyohiyo**.
