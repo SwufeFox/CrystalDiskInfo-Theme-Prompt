@@ -8,6 +8,32 @@ The project provides structured specifications that describe CrystalDiskInfo's t
 
 ---
 
+## 📦 Installing a Theme
+
+CrystalDiskInfo themes are installed under:
+
+`<software>\CdiResource\themes\<theme name>\`
+
+For example:
+
+```
+CrystalDiskInfo\
+└── CdiResource\
+    └── themes\
+        └── MyTheme\
+            ├── theme.ini
+            ├── SDdiskStatusGood100-100.png
+            ├── SDdiskStatusGood100-125.png
+            ├── ...
+            └── ShizukuBackground-300.png
+```
+
+Where `<software>` is the directory containing your
+CrystalDiskInfo installation.
+
+After placing the theme in the themes directory, it can be selected
+from CrystalDiskInfo's theme settings.
+
 ## 📚 Theme Specifications
 
 Choose the specification according to the type of theme you want to create.
