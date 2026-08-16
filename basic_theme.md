@@ -1,278 +1,400 @@
 # CrystalDiskInfo Basic Theme
 
-A Basic Theme is a CrystalDiskInfo theme built around a set of
-character illustrations, a background image, and a `theme.ini`.
+A Basic Theme is a character-focused CrystalDiskInfo theme consisting
+of character illustrations, a large background, and a `theme.ini`.
 
-The basic theme focuses on the character/status presentation and
-does not necessarily provide every visual resource used by a
-complete CrystalDiskInfo interface.
+The character illustrations represent different disk-health states
+through different expressions, poses, and actions.
+
+They are transparent-background character assets, not generic status
+icons.
 
 ---
 
 ## Theme Structure
 
-A basic theme contains:
+A Basic Theme contains:
 
 ```text
 Basic Theme
 ├── theme.ini
 ├── ShizukuBackground-300.png
 │
-├── SDdiskStatusBad-*.png
-├── SDdiskStatusCaution-*.png
-├── SDdiskStatusGood-*.png
 ├── SDdiskStatusGood100-*.png
+├── SDdiskStatusGood-*.png
+├── SDdiskStatusCaution-*.png
+├── SDdiskStatusBad-*.png
 └── SDdiskStatusUnknown-*.png
 ````
 
-Each status family normally has six resource variants:
+There are five character status families:
 
 ```text
-100
-125
-150
-200
-250
-300
+SDdiskStatusGood100
+SDdiskStatusGood
+SDdiskStatusCaution
+SDdiskStatusBad
+SDdiskStatusUnknown
 ```
 
-For example:
+Each family has six size variants:
 
 ```text
-SDdiskStatusGood100-100.png
-SDdiskStatusGood100-125.png
-SDdiskStatusGood100-150.png
-SDdiskStatusGood100-200.png
-SDdiskStatusGood100-250.png
-SDdiskStatusGood100-300.png
+-300
+-250
+-200
+-150
+-125
+-100
+```
+
+This results in:
+
+```text
+5 status families × 6 variants = 30 character images
+30 character images + 1 background + 1 theme.ini = 32 files
 ```
 
 ---
 
 # Character Illustrations
 
-The `SDdiskStatus*` resources are **character illustrations**, not
-generic status icons.
+All `SDdiskStatus*` resources are transparent-background character
+illustrations.
 
-They are usually transparent-background character or mascot
-illustrations displayed as part of CrystalDiskInfo's disk-health
-presentation.
+They are used to visually communicate the disk-health state.
 
-A typical character asset uses a canvas of approximately:
-
-```text
-256 × 384 px
-```
-
-For example:
-
-```text
-SDdiskStatusGood100-200.png
-```
-
-contains a complete character illustration rather than a small
-symbol or badge.
-
-The character itself is an important part of the theme's visual
-identity.
-
----
-
-## Status Families
-
-The basic theme contains five status families:
-
-| Resource              | Meaning               |
-| --------------------- | --------------------- |
-| `SDdiskStatusGood100` | 100% / perfect health |
-| `SDdiskStatusGood`    | Good / healthy        |
-| `SDdiskStatusCaution` | Caution / warning     |
-| `SDdiskStatusBad`     | Bad / critical        |
-| `SDdiskStatusUnknown` | Unknown health state  |
-
-The exact artistic representation is determined by the theme.
-
-For a character-based theme, the status can be communicated through
-the character's:
+The illustrations may change:
 
 * facial expression
 * pose
 * gesture
-* accessories
-* visual effects
-* surrounding decorations
-* overall emotional state
+* action
+* emotional state
+* props
+* decorative effects
+
+between different status families.
+
+However, they should remain visually recognizable as the same character
+and belong to the same theme.
+
+Do not design the five status families as unrelated characters.
+
+---
+
+# Status Families
+
+| Resource              | Meaning                      |
+| --------------------- | ---------------------------- |
+| `SDdiskStatusGood100` | 100% / perfect health        |
+| `SDdiskStatusGood`    | Good / healthy               |
+| `SDdiskStatusCaution` | Caution / warning            |
+| `SDdiskStatusBad`     | Bad / critical               |
+| `SDdiskStatusUnknown` | Unknown / unavailable status |
+
+The artistic interpretation is flexible.
 
 For example:
 
 ```text
-Good100  → especially happy / perfect condition
-Good     → normal / healthy
-Caution  → worried / warning
-Bad      → distressed / critical
+Good100  → especially happy / energetic
+Good     → relaxed / cheerful
+Caution  → worried / concerned
+Bad      → distressed / shocked
 Unknown  → confused / uncertain
 ```
 
-These are examples of visual direction, not mandatory character
-expressions.
+These are examples, not mandatory expressions.
+
+The important requirement is that the states are visually
+distinguishable while remaining part of one coherent character set.
 
 ---
 
-# Character Consistency
+# Image Sizes
 
-All `SDdiskStatus*` illustrations belonging to the same theme should
-look like members of the same character set.
+The numeric suffix in the filename is a **predefined size variant**.
 
-Maintain consistency in:
+It does not mean that each image should be independently designed.
 
-* character identity
-* proportions
-* hairstyle
-* clothing
-* rendering style
-* line art
-* color palette
-* lighting
-* perspective
-* overall art style
+For character resources, the dimensions are:
 
-The character may change pose or expression between health states,
-but should remain recognizably the same character unless the theme
-explicitly calls for different characters.
-
-Do not generate five unrelated illustrations.
-
----
-
-# Status Variants
-
-The six variants of a status represent the same character design at
-different CrystalDiskInfo resource scales.
+| Suffix | Canvas Size |
+| ------ | ----------: |
+| `-300` |   384 × 576 |
+| `-250` |   320 × 480 |
+| `-200` |   256 × 384 |
+| `-150` |   192 × 288 |
+| `-125` |   160 × 240 |
+| `-100` |   128 × 192 |
 
 For example:
 
 ```text
-SDdiskStatusGood-100.png
-SDdiskStatusGood-125.png
-SDdiskStatusGood-150.png
-SDdiskStatusGood-200.png
-SDdiskStatusGood-250.png
-SDdiskStatusGood-300.png
+SDdiskStatusGood100-300.png
+384 × 576
+
+SDdiskStatusGood100-200.png
+256 × 384
+
+SDdiskStatusGood100-100.png
+128 × 192
 ```
 
-These should depict the same character and the same status.
+All six variants represent the same artwork at different sizes.
 
-Do not redesign the character independently for each variant.
+---
 
-The source artwork should be created at sufficient quality to produce
-all required variants.
+# Master Artwork
+
+The `-300` variant is the master artwork.
+
+For every status family, generate the `-300` image first:
+
+```text
+SDdiskStatusGood100-300.png
+SDdiskStatusGood-300.png
+SDdiskStatusCaution-300.png
+SDdiskStatusBad-300.png
+SDdiskStatusUnknown-300.png
+```
+
+Each master image should be:
+
+```text
+384 × 576 px
+```
+
+Do not independently generate the six size variants with an image
+generation model.
+
+Instead:
+
+```text
+Generate -300
+     ↓
+Python / Pillow
+     ↓
+-250
+-200
+-150
+-125
+-100
+```
+
+This keeps every size variant pixel-consistent with the original
+artwork.
+
+---
+
+# Character Composition
+
+Design the character specifically for the `384 × 576` master canvas.
+
+The character should:
+
+* fit completely inside the canvas
+* retain important details after downscaling
+* have reasonable transparent margins
+* avoid important details touching the canvas edges
+* remain recognizable at the smallest size
+
+Transparent space is expected.
+
+The character does not need to fill the entire canvas.
+
+---
+
+# Generating Size Variants
+
+Use the `-300` master image as the source for all smaller variants.
+
+Python/Pillow is recommended.
+
+Example:
+
+```python
+from PIL import Image
+
+sizes = {
+    300: (384, 576),
+    250: (320, 480),
+    200: (256, 384),
+    150: (192, 288),
+    125: (160, 240),
+    100: (128, 192),
+}
+
+source = Image.open("SDdiskStatusGood100-300.png")
+
+for scale, size in sizes.items():
+    image = source.resize(size, Image.Resampling.LANCZOS)
+    image.save(f"SDdiskStatusGood100-{scale}.png")
+```
+
+The alpha channel must be preserved.
+
+Apply the same process to every status family.
 
 ---
 
 # Background
 
-The basic theme uses:
+The Basic Theme contains:
 
 ```text
 ShizukuBackground-300.png
 ```
 
-The background is a large square image with a typical canvas size of:
+This is the theme's large background image.
+
+The background is fundamentally different from the character assets:
+
+* it is not transparent
+* it is a complete scene/environment
+* it provides the visual setting for the character
+* it should be designed independently from the character asset
+
+The typical background canvas is:
 
 ```text
 3000 × 3000 px
 ```
 
-Unlike the character illustrations, the background is intended to
-provide the large-scale visual environment behind the CrystalDiskInfo
-interface.
-
-The background should therefore be designed with:
-
-* sufficient resolution
-* appropriate composition
-* suitable negative space
-* visual compatibility with the character
-* consistent lighting and color palette
-
-Do not treat the background as simply an enlarged character image.
-
-It should function as a complete scene or visual backdrop.
-
 ---
 
-# Character and Background Relationship
+## Background Composition
 
-The character illustrations and background should be designed as one
-theme.
+The background should be designed with the character's placement in
+mind.
+
+Reserve suitable visual space on the **left side** for the character
+illustration.
 
 For example:
 
 ```text
-        Theme Concept
-             │
-       ┌─────┴─────┐
-       ▼           ▼
-   Character     Background
-   256×384       3000×3000
-       │           │
-       └─────┬─────┘
-             ▼
-       CrystalDiskInfo
-          Basic Theme
+┌──────────────────────────────────────┐
+│                                      │
+│  Character Area       Scene /        │
+│  relatively           Environment    │
+│  uncluttered                         │
+│                                      │
+│                                      │
+└──────────────────────────────────────┘
 ```
 
-The character should visually fit into the environment established by
-the background.
+The exact composition depends on the theme.
 
-Keep consistent:
+Do not place important visual elements directly behind the character
+unless the composition intentionally calls for it.
+
+The background should match the character's:
 
 * color palette
-* lighting direction
+* lighting
 * atmosphere
-* artistic style
+* rendering style
+* setting
 * visual motifs
-* character design
 
 ---
 
-# `theme.ini`
+# Visual Consistency
 
-`theme.ini` controls the theme's metadata, colors, transparency, and
-optional parent themes.
+The entire Basic Theme should feel like one artwork.
 
-Example:
+Maintain consistency between the character states and background in:
 
-```ini
-[Info]
-Author=My Theme
+* character identity
+* art style
+* line art
+* rendering
+* color palette
+* lighting
+* proportions
+* costume
+* environment
+* overall atmosphere
 
-[Color];RGB
-LabelText=0xFFFFFF;
-ButtonText=0x000000;
-ListText1=0xFFFFFF;
-ListText2=0xFFFFFF;
-ListBk1=0x202020;
-ListBk2=0x333333;
-ListLine1=0x535353;
-ListLine2=0x444444;
-Glass=0x202020;
+The status illustrations should look like different moments or states
+of the same character.
 
-[Alpha]
-GlassAlpha=128;
+---
+
+# Required Files
+
+A complete Basic Theme contains:
+
+```text
+theme.ini
+
+ShizukuBackground-300.png
+
+SDdiskStatusGood100-300.png
+SDdiskStatusGood100-250.png
+SDdiskStatusGood100-200.png
+SDdiskStatusGood100-150.png
+SDdiskStatusGood100-125.png
+SDdiskStatusGood100-100.png
+
+SDdiskStatusGood-300.png
+SDdiskStatusGood-250.png
+SDdiskStatusGood-200.png
+SDdiskStatusGood-150.png
+SDdiskStatusGood-125.png
+SDdiskStatusGood-100.png
+
+SDdiskStatusCaution-300.png
+SDdiskStatusCaution-250.png
+SDdiskStatusCaution-200.png
+SDdiskStatusCaution-150.png
+SDdiskStatusCaution-125.png
+SDdiskStatusCaution-100.png
+
+SDdiskStatusBad-300.png
+SDdiskStatusBad-250.png
+SDdiskStatusBad-200.png
+SDdiskStatusBad-150.png
+SDdiskStatusBad-125.png
+SDdiskStatusBad-100.png
+
+SDdiskStatusUnknown-300.png
+SDdiskStatusUnknown-250.png
+SDdiskStatusUnknown-200.png
+SDdiskStatusUnknown-150.png
+SDdiskStatusUnknown-125.png
+SDdiskStatusUnknown-100.png
 ```
 
-A theme may also inherit resources from other themes:
+---
 
-```ini
-[Info]
-Author=My Theme
-ParentTheme1=ShizukuMiko
-ParentTheme2=ShizukuHotaru
+# Recommended Workflow
+
+```text
+Theme Concept
+      ↓
+Character Design
+      ↓
+Design five character states
+      │
+      ├── Good100
+      ├── Good
+      ├── Caution
+      ├── Bad
+      └── Unknown
+      ↓
+Generate five 384 × 576 master artworks
+      ↓
+Generate the 3000 × 3000 background
+      ↓
+Use Python/Pillow to create all smaller variants
+      ↓
+Create theme.ini
+      ↓
+Validate the complete theme
 ```
-
-See [`theme_ini.md`](./theme_ini.md) for the complete configuration
-and inheritance specification.
 
 ---
 
@@ -280,57 +402,24 @@ and inheritance specification.
 
 When generating a Basic Theme:
 
-1. Design the theme concept first.
-2. Design the main character or mascot.
-3. Create a coherent set of five health-state illustrations.
-4. Keep the character identity consistent across all states.
-5. Treat `SDdiskStatus*` as character illustrations, not icons.
-6. Prepare the character artwork for a 256×384 canvas.
-7. Generate all six CrystalDiskInfo variants for each status.
-8. Create a 3000×3000 background.
-9. Make the background visually compatible with the character.
-10. Keep transparent backgrounds for character assets where required.
-11. Do not place unnecessary UI elements inside character assets.
-12. Preserve all required filenames exactly.
-13. Generate `theme.ini` with colors matching the artwork.
-14. Do not generate unrelated visual styles for different resources.
-
----
-
-# Required Resources
-
-A complete Basic Theme should provide:
-
-```text
-theme.ini
-
-SDdiskStatusBad
-    × 6
-
-SDdiskStatusCaution
-    × 6
-
-SDdiskStatusGood
-    × 6
-
-SDdiskStatusGood100
-    × 6
-
-SDdiskStatusUnknown
-    × 6
-
-ShizukuBackground-300.png
-```
-
-This gives:
-
-```text
-5 status families × 6 variants
-+ 1 background
-+ 1 theme.ini
-```
-
-for the basic resource set.
+1. Design one coherent character first.
+2. Create five variations of that character for the five status states.
+3. Generate only the `-300` character artwork with the image-generation
+   model.
+4. Make every `-300` character image exactly `384 × 576`.
+5. Generate all smaller variants programmatically from the `-300`
+   artwork.
+6. Never independently redraw the same character at different sizes.
+7. Preserve transparency in all character images.
+8. Keep the character identity consistent between all states.
+9. Use expressions, poses, and actions to communicate different states.
+10. Generate the background separately at approximately `3000 × 3000`.
+11. Reserve suitable space on the left side of the background for the
+    character.
+12. Do not put UI elements or arbitrary text into character images.
+13. Preserve all filenames exactly.
+14. Do not omit any required variant.
+15. Keep the character and background visually consistent.
 
 ---
 
@@ -340,32 +429,21 @@ Before considering a Basic Theme complete:
 
 * [ ] `theme.ini` exists
 * [ ] `ShizukuBackground-300.png` exists
-* [ ] Background is approximately 3000×3000
-* [ ] `SDdiskStatusGood100` exists
-* [ ] `SDdiskStatusGood` exists
-* [ ] `SDdiskStatusCaution` exists
-* [ ] `SDdiskStatusBad` exists
-* [ ] `SDdiskStatusUnknown` exists
-* [ ] Every status has all six variants
-* [ ] Character artwork is approximately 256×384
-* [ ] Character assets use the appropriate transparent background
-* [ ] All status illustrations belong to the same visual theme
-* [ ] Statuses are visually distinguishable
-* [ ] Background and character share the same visual language
-* [ ] Filenames are unchanged
-* [ ] `theme.ini` matches the visual theme
-
----
-
-# Design Principle
-
-A Basic Theme should be understood as:
-
-> **A consistent character-based visual theme for CrystalDiskInfo,
-> consisting of health-state character illustrations, a large
-> background, and theme configuration.**
-
-The most important requirement is not merely producing all files.
-
-The entire resource set should feel like **one character, one world,
-and one coherent theme**.
+* [ ] Background is 3000 × 3000
+* [ ] All five status families exist
+* [ ] Every status has a `-300` master
+* [ ] Every `-300` image is 384 × 576
+* [ ] `-250` images are 320 × 480
+* [ ] `-200` images are 256 × 384
+* [ ] `-150` images are 192 × 288
+* [ ] `-125` images are 160 × 240
+* [ ] `-100` images are 128 × 192
+* [ ] Smaller variants were generated from the corresponding `-300`
+  master
+* [ ] Character images have transparent backgrounds
+* [ ] All five states use the same character design
+* [ ] States have visually different expressions or actions
+* [ ] Background provides suitable space for the character
+* [ ] Background and character share the same visual style
+* [ ] All filenames are correct
+* [ ] No required resource is missing
