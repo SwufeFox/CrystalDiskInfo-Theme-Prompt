@@ -28,7 +28,64 @@ Do not invent resource names, dimensions, or formats.
 
 ---
 
-### 2. Master artwork first
+### 2. Theme directory must start with `Shizuku`
+
+CrystalDiskInfo only scans theme directories whose names start with:
+
+```text
+Shizuku
+````
+
+Therefore every generated theme must use a directory name such as:
+
+```text
+ShizukuFox
+ShizukuFoxNight
+ShizukuMikoNight
+```
+
+Do not generate themes with directory names such as:
+
+```text
+FoxTheme
+MyTheme
+NightTheme
+```
+
+The final installation path is:
+
+```text
+<software>\CdiResource\themes\<theme name>\
+```
+
+Therefore a valid theme path looks like:
+
+```text
+<software>\CdiResource\themes\ShizukuMyTheme\
+```
+
+---
+
+### 3. Themes do not hot-reload
+
+CrystalDiskInfo does not support hot-reloading themes.
+
+After installing or modifying a theme, CrystalDiskInfo must be restarted
+for the changes to take effect.
+
+When instructing a human to test a theme:
+
+1. Install or modify the theme.
+2. Close CrystalDiskInfo.
+3. Start CrystalDiskInfo again.
+4. Select or inspect the theme.
+
+Do not assume that changing a theme file while CrystalDiskInfo is
+running will immediately update the application.
+
+---
+
+### 4. Master artwork first
 
 When a resource has multiple size variants, **do not independently
 generate every size with an image-generation model**.
@@ -46,14 +103,12 @@ For the character resources described in `basic_theme.md`:
 -150
 -125
 -100
-````
+```
 
 The `-300` image is the master artwork.
 
 Use Python/Pillow or another lossless image-processing workflow to create
 the smaller variants.
-
-This is a hard requirement.
 
 Do NOT do this:
 
@@ -83,7 +138,7 @@ This prevents visual inconsistencies between scale variants.
 
 ---
 
-### 3. Preserve transparency
+### 5. Preserve transparency
 
 Character illustrations are transparent-background assets unless the
 relevant specification explicitly says otherwise.
@@ -94,7 +149,7 @@ The background is a separate resource.
 
 ---
 
-### 4. Character states are variations of one character
+### 6. Character states are variations of one character
 
 When a theme contains multiple character status resources, they should
 represent the same character and visual identity.
@@ -113,7 +168,7 @@ to five different status states.
 
 ---
 
-### 5. Backgrounds are different from character assets
+### 7. Backgrounds are different from character assets
 
 A theme background is a complete scene/environment, not a character
 illustration.
@@ -276,19 +331,19 @@ A completed theme is installed at:
 <software>\CdiResource\themes\<theme name>\
 ```
 
-For example:
+The `<theme name>` **must start with `Shizuku`**.
+
+Example:
 
 ```text
 CrystalDiskInfo\
 └── CdiResource\
     └── themes\
-        └── MyTheme\
+        └── ShizukuMyTheme\
             ├── theme.ini
             ├── ...
             └── ShizukuBackground-300.png
 ```
-
-The final generated files should form a valid theme directory.
 
 ---
 
@@ -304,11 +359,14 @@ Before declaring a theme complete:
 * Verify that no unnecessary resources were duplicated in Minimal Themes.
 * Verify `theme.ini`.
 * Verify parent-theme relationships.
-* Verify that the final directory can be placed under:
+* Verify the theme directory name starts with `Shizuku`.
+* Verify the final directory is under:
 
 ```text
 <software>\CdiResource\themes\<theme name>\
 ```
+
+After installation, restart CrystalDiskInfo before checking the result.
 
 ---
 
@@ -332,7 +390,9 @@ Agent reads AGENT.md
         ↓
 Agent reads the relevant specification
         ↓
-Agent designs the theme
+Choose a Shizuku-prefixed theme name
+        ↓
+Design the theme
         ↓
 Generate master artwork
         ↓
@@ -342,5 +402,7 @@ Assemble theme.ini and resources
         ↓
 Validate
         ↓
-Complete CrystalDiskInfo theme
+Install under CdiResource\themes\Shizuku*
+        ↓
+Restart CrystalDiskInfo
 ```
